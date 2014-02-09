@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="de.hoesel.dav.buv.twitter.command.baustelle.twittern"
+               label="Baustelle twittern"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <and>
+                        <adapt
+                              type="de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.Baustelle">
+                        </adapt>
+                     </and>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="de.hoesel.dav.buv.twitter.command.baustelle.twittern"
+               label="Baustelle twittern2"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <and>
+                        <instanceof
+                              value="de.bsvrz.buv.plugin.netz.baustelle.BaustelleSymbolEditPart">
+                        </instanceof>
+                     </and>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="de.hoesel.dav.buv.twitter.command.baustelle.twittern"
+            name="Baustelle Twittern">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="de.hoesel.dav.buv.twitter.handler.BaustelleTwitternHandler"
+            commandId="de.hoesel.dav.buv.twitter.command.baustelle.twittern">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.hoesel.dav.buv.twitter.preferences.TwitterPreferencePage"
+            id="de.hoesel.dav.buv.twitter.preferences.TwitterPreferencePage"
+            name="Twitter Einstellungen">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.hoesel.dav.buv.twitter.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

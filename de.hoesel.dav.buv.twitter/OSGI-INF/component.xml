@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.hoesel.dav.buv.twitter">
+   <implementation class="de.hoesel.dav.buv.twitter.internal.RahmenwerkService"/>
+   <reference bind="bindObjektFactory" cardinality="1..1" interface="de.bsvrz.sys.funclib.bitctrl.modell.ObjektFactory" name="ObjektFactory" policy="static" unbind="unbindObjektFactory"/>
+   <reference bind="bindRahmenwerk" cardinality="1..1" interface="de.bsvrz.buv.rw.basislib.Rahmenwerk" name="Rahmenwerk" policy="static" unbind="unbindRahmenwerk"/>
+</scr:component>
