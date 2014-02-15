@@ -11,6 +11,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -78,7 +79,7 @@ public class TwitterPreferencePage extends PreferencePage implements
 
 		try {
 			user = twitter.verifyCredentials();
-			invalidateTwitterAuthentication(composite);
+			invalidateTwitterAuthentication(composite, user);
 		} catch (TwitterException e) {
 			if (401 == e.getStatusCode()) {
 				// (noch) kein oauth token
@@ -99,7 +100,15 @@ public class TwitterPreferencePage extends PreferencePage implements
 		return composite;
 	}
 
-	private void invalidateTwitterAuthentication(Composite parent) {
+	private void invalidateTwitterAuthentication(Composite parent, User user) {
+
+		Label userLabel = new Label(parent, SWT.NONE);
+		userLabel.setText("Aktueller Twitter Account: " + user.getName());
+
+		Browser browser = new Browser(parent, SWT.NONE);
+		browser.setJavascriptEnabled(true);
+		browser.setUrl(user.getBiggerProfileImageURLHttps());
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
 
 		Button invalidateAuth = new Button(parent, SWT.PUSH);
 		invalidateAuth.setText("Twitter Authentifikation widerrufen.");
