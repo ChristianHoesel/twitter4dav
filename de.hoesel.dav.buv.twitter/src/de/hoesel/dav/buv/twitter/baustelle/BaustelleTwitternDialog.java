@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import de.bsvrz.buv.rw.bitctrl.CacheService;
@@ -134,8 +135,17 @@ public class BaustelleTwitternDialog extends TitleAreaDialog {
 			meldungsText.append(" vom " + format.format(startZeit) + " bis "
 					+ format.format(endZeit));
 		}
-
-		messgae.setText(meldungsText.toString());
+		
+		if(meldungsText.length() > 140){
+			//Nachricht zu lang
+			String string = meldungsText.toString();
+			string = string.replace("Autobahnanschlussstelle", "");
+			string = string.replaceAll("\\[\\d+\\]", "");
+			string = string.replace("  ", " ");
+			messgae.setText(string);
+		}else{
+			messgae.setText(meldungsText.toString());
+		}
 
 		return area;
 	}
@@ -146,9 +156,13 @@ public class BaustelleTwitternDialog extends TitleAreaDialog {
 		Twitter twitter = service.getTwitter();
 
 		try {
-			// TODO: Anstatt nur des Textes sollten wir auch noch ein Bildchen
-			// mit versenden.
-			twitter.updateStatus("[Test] " + messgae.getText());
+			//TODO:Bilder funktionieren noch nicht richtig
+//			InputStream resourceAsStream = BaustelleTwitternDialog.class.getResourceAsStream("baustelle.gif");	
+			StatusUpdate update = new StatusUpdate("[Test] " + messgae.getText());
+//			update.setMedia("Baustelle",resourceAsStream);
+			
+			//TODO: Die Position könnte hier auch noch mit ran.
+			twitter.updateStatus(update);
 			super.okPressed();
 		} catch (TwitterException e) {
 			setErrorMessage(e.getLocalizedMessage());
