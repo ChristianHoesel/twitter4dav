@@ -57,8 +57,9 @@ public class TwitterPreferencePage extends PreferencePage implements
 
 	public TwitterPreferencePage() {
 		super();
+		setTitle("Twitter Einstellungen");
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("Einstellungen für Twitter");
+		setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "/icons/bird_black_48_0.png"));
 	}
 
 	/*

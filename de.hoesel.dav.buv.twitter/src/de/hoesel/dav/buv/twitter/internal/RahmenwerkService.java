@@ -10,6 +10,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import de.bsvrz.buv.rw.basislib.Rahmenwerk;
+import de.bsvrz.buv.rw.bitctrl.CacheService;
 import de.bsvrz.sys.funclib.bitctrl.modell.ObjektFactory;
 import de.hoesel.dav.buv.twitter.Activator;
 import de.hoesel.dav.buv.twitter.preferences.PreferenceConstants;
@@ -33,6 +34,8 @@ public class RahmenwerkService {
 	private String oAuthConsumerKey;
 
 	private String oAuthConsumerSecret;
+
+	private CacheService cacheService;
 
 	protected void activate() {
 		service = this;
@@ -124,5 +127,18 @@ public class RahmenwerkService {
 			twitter = null;
 		}
 	}
+	
+	protected void bindCacheService(final CacheService newCacheService) {
+		cacheService = newCacheService;
+	}
+
+	protected void unbindCacheService(final CacheService newCacheService) {
+		cacheService = null;
+	}
+
+	public CacheService getCacheService() {
+		return cacheService;
+	}
+
 
 }
