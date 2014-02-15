@@ -1,4 +1,4 @@
-package de.hoesel.dav.buv.twitter.handler;
+package de.hoesel.dav.buv.twitter.baustelle;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -19,7 +19,6 @@ import de.bsvrz.buv.rw.bitctrl.CacheService;
 import de.bsvrz.sys.funclib.bitctrl.modell.SystemObjekt;
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.Baustelle;
 import de.bsvrz.sys.funclib.bitctrl.modell.util.cache.NetzCacheExtended;
-import de.hoesel.dav.buv.twitter.baustelle.BaustelleTwitternDialog;
 import de.hoesel.dav.buv.twitter.internal.RahmenwerkService;
 
 /**

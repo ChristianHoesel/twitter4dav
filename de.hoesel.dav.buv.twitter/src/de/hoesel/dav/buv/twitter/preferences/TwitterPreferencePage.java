@@ -14,7 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -29,10 +28,8 @@ import org.eclipse.ui.PlatformUI;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.auth.AccessToken;
-import twitter4j.auth.Authorization;
 import twitter4j.auth.RequestToken;
 import de.hoesel.dav.buv.twitter.Activator;
 import de.hoesel.dav.buv.twitter.internal.RahmenwerkService;
@@ -47,7 +44,6 @@ import de.hoesel.dav.buv.twitter.internal.RahmenwerkService;
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
  */
-
 public class TwitterPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
@@ -59,7 +55,8 @@ public class TwitterPreferencePage extends PreferencePage implements
 		super();
 		setTitle("Twitter Einstellungen");
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "/icons/bird_black_48_0.png"));
+		setImageDescriptor(Activator.imageDescriptorFromPlugin(
+				Activator.PLUGIN_ID, "/icons/bird_black_48_0.png"));
 	}
 
 	/*
@@ -70,6 +67,7 @@ public class TwitterPreferencePage extends PreferencePage implements
 	 * .swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		noDefaultAndApplyButton();
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -151,7 +149,7 @@ public class TwitterPreferencePage extends PreferencePage implements
 		final String authRequest = authRequestToken.getAuthenticationURL();
 		Link link = new Link(composite, SWT.NONE);
 		GridDataFactory.fillDefaults().span(3, 1).applyTo(link);
-		link.setText("Open the following URL and grant access to your account: \n<A href=\""
+		link.setText("Klicken Sie auf den folgenden Link und gewähren Sie der Anwendung Zugriff auf Ihr Twitter Konto:\n<A href=\""
 				+ authRequest + "\">" + authRequest + "</A>");
 
 		link.addSelectionListener(new SelectionAdapter() {
@@ -161,12 +159,21 @@ public class TwitterPreferencePage extends PreferencePage implements
 					// Open default external browser
 					PlatformUI.getWorkbench().getBrowserSupport()
 							.getExternalBrowser().openURL(new URL(authRequest));
+					setErrorMessage(null);
 				} catch (PartInitException ex) {
-					// TODO Auto-generated catch block
-					ex.printStackTrace();
+					setErrorMessage(ex.getLocalizedMessage());
+					Activator
+							.getDefault()
+							.getLog()
+							.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+									ex.getLocalizedMessage()));
 				} catch (MalformedURLException ex) {
-					// TODO Auto-generated catch block
-					ex.printStackTrace();
+					setErrorMessage(ex.getLocalizedMessage());
+					Activator
+							.getDefault()
+							.getLog()
+							.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+									ex.getLocalizedMessage()));
 				}
 			}
 		});
