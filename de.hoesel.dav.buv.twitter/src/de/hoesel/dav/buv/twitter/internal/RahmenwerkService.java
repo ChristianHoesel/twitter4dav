@@ -1,5 +1,7 @@
-
 package de.hoesel.dav.buv.twitter.internal;
+
+import java.io.IOException;
+import java.util.Properties;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -15,7 +17,7 @@ import de.hoesel.dav.buv.twitter.preferences.PreferenceConstants;
 /**
  * 
  * @author Christian Hösel
- *
+ * 
  */
 public class RahmenwerkService {
 
@@ -24,14 +26,16 @@ public class RahmenwerkService {
 	private Rahmenwerk rahmenwerk;
 	private ObjektFactory objektFactory;
 
-
 	private Twitter twitter;
 
 	private TwitterFactory twitterFactory;
 
+	private String oAuthConsumerKey;
+
+	private String oAuthConsumerSecret;
+
 	protected void activate() {
 		service = this;
-	
 
 	}
 
@@ -67,30 +71,55 @@ public class RahmenwerkService {
 	public ObjektFactory getObjektFactory() {
 		return objektFactory;
 	}
-	
-	public Twitter getTwitter(){
-		if(twitter == null){
+
+	public Twitter getTwitter() {
+		if (twitter == null) {
+			loadProperties();
 			ConfigurationBuilder builder = new ConfigurationBuilder();
-			builder.setOAuthConsumerKey("OAuthConsumerKey");
-			builder.setOAuthConsumerSecret("OAuthConsumerSecret");
-			
-			IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-			String accessToken = preferenceStore.getString(PreferenceConstants.OAUTH_ACCESS_TOKEN);
-			String secretToken = preferenceStore.getString(PreferenceConstants.OAUTH_ACCESS_SECRET_TOKEN);
-			if(!accessToken.isEmpty() && !secretToken.isEmpty()){
+			builder.setOAuthConsumerKey(oAuthConsumerKey);
+			builder.setOAuthConsumerSecret(oAuthConsumerSecret);
+
+			IPreferenceStore preferenceStore = Activator.getDefault()
+					.getPreferenceStore();
+			String accessToken = preferenceStore
+					.getString(PreferenceConstants.OAUTH_ACCESS_TOKEN);
+			String secretToken = preferenceStore
+					.getString(PreferenceConstants.OAUTH_ACCESS_SECRET_TOKEN);
+			if (!accessToken.isEmpty() && !secretToken.isEmpty()) {
 				builder.setOAuthAccessToken(accessToken);
 				builder.setOAuthAccessTokenSecret(secretToken);
 			}
 			Configuration configuration = builder.build();
 			twitterFactory = new TwitterFactory(configuration);
 			twitter = twitterFactory.getInstance();
-			
+
 		}
 		return twitter;
 	}
-	
-	public void shutdownTwitter(){
-		if(twitter!=null){
+
+	/**
+	 * Laden des ComsumerKeys und des ConsumerSecrets aus einem Properities
+	 * File (twitter.properities).
+	 */
+	private void loadProperties() {
+
+		try {
+			Properties prop = new Properties();
+			// load a properties file from class path, inside static method
+			prop.load(RahmenwerkService.class
+					.getResourceAsStream("twitter.properties"));
+
+			// get the property value and print it out
+			oAuthConsumerKey = prop.getProperty("OAuthConsumerKey");
+			oAuthConsumerSecret = prop.getProperty("OAuthConsumerSecret");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	public void shutdownTwitter() {
+		if (twitter != null) {
 			twitter.shutdown();
 			twitter = null;
 		}
