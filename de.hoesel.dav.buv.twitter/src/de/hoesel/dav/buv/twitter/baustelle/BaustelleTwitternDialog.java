@@ -20,11 +20,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import twitter4j.GeoLocation;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import de.bsvrz.buv.rw.bitctrl.CacheService;
 import de.bsvrz.sys.funclib.bitctrl.modell.att.Feld;
+import de.bsvrz.sys.funclib.bitctrl.modell.tmgeoreferenzierungglobal.attribute.AttWgs84Breite;
+import de.bsvrz.sys.funclib.bitctrl.modell.tmgeoreferenzierungglobal.attribute.AttWgs84Laenge;
+import de.bsvrz.sys.funclib.bitctrl.modell.tmgeoreferenzierungglobal.konfigurationsdaten.KdLinienKoordinaten;
+import de.bsvrz.sys.funclib.bitctrl.modell.tmgeoreferenzierungglobal.objekte.Linie;
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.konfigurationsdaten.KdStrassenSegment;
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.AeusseresStrassenSegment;
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.Baustelle;
@@ -32,6 +37,7 @@ import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.InneresStrass
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.Strasse;
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.StrassenKnoten;
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.StrassenSegment;
+import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.objekte.StrassenTeilSegment;
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.parameter.PdSituationsEigenschaften;
 import de.bsvrz.sys.funclib.bitctrl.modell.tmverkehrglobal.parameter.PdSituationsEigenschaften.Daten;
 import de.bsvrz.sys.funclib.bitctrl.modell.util.cache.NetzCacheExtended;
@@ -43,6 +49,7 @@ public class BaustelleTwitternDialog extends TitleAreaDialog {
 	private Text messgae;
 	private Baustelle baustelle;
 	private NetzCacheExtended netzCache;
+	private GeoLocation location;
 
 	/**
 	 * Create the dialog.
@@ -135,19 +142,44 @@ public class BaustelleTwitternDialog extends TitleAreaDialog {
 			meldungsText.append(" vom " + format.format(startZeit) + " bis "
 					+ format.format(endZeit));
 		}
-		
-		if(meldungsText.length() > 140){
-			//Nachricht zu lang
+
+		if (meldungsText.length() > 140) {
+			// Nachricht zu lang
 			String string = meldungsText.toString();
 			string = string.replace("Autobahnanschlussstelle", "");
 			string = string.replaceAll("\\[\\d+\\]", "");
 			string = string.replace("  ", " ");
 			messgae.setText(string);
-		}else{
+		} else {
 			messgae.setText(meldungsText.toString());
 		}
 
+		location = ermittleGeoLocation(strassenSegmente);
+
 		return area;
+	}
+
+	private GeoLocation ermittleGeoLocation(Feld<StrassenSegment> segmente) {
+		if (segmente == null || segmente.isEmpty()) {
+			return null;
+		}
+
+		final StrassenSegment segment = segmente.get(0);
+		Feld<Linie> linienReferenz = segment.getKdBestehtAusLinienObjekten()
+				.getDatum().getLinienReferenz();
+		if (linienReferenz.isEmpty()) {
+			return null;
+		}
+		final StrassenTeilSegment sts = (StrassenTeilSegment) linienReferenz
+				.iterator().next();
+		final KdLinienKoordinaten.Daten koordinaten = sts
+				.getKdLinienKoordinaten().getDatum();
+
+		AttWgs84Laenge attWgs84Laenge = koordinaten.getX().get(0);
+		AttWgs84Breite attWgs84Breite = koordinaten.getY().get(0);
+
+		return new GeoLocation(attWgs84Breite.doubleValue(),
+				attWgs84Laenge.doubleValue());
 	}
 
 	@Override
@@ -156,12 +188,20 @@ public class BaustelleTwitternDialog extends TitleAreaDialog {
 		Twitter twitter = service.getTwitter();
 
 		try {
-			//TODO:Bilder funktionieren noch nicht richtig
-//			InputStream resourceAsStream = BaustelleTwitternDialog.class.getResourceAsStream("baustelle.gif");	
-			StatusUpdate update = new StatusUpdate("[Test] " + messgae.getText());
-//			update.setMedia("Baustelle",resourceAsStream);
-			
-			//TODO: Die Position könnte hier auch noch mit ran.
+			// TODO:Bilder funktionieren noch nicht richtig
+			// InputStream resourceAsStream =
+			// BaustelleTwitternDialog.class.getResourceAsStream("baustelle.gif");
+			StatusUpdate update = new StatusUpdate("[Test] "
+					+ messgae.getText());
+
+			if (location != null) {
+				// TODO: Das funktioniert nur, wenn man in seinen Twitter
+				// Setting via Opt-In das Anzeigen der Location erlaubt.
+				update.displayCoordinates(true);
+				update.setLocation(location);
+			}
+			// update.setMedia("Baustelle",resourceAsStream);
+
 			twitter.updateStatus(update);
 			super.okPressed();
 		} catch (TwitterException e) {
