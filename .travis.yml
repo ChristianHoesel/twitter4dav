@@ -1,2 +1,2 @@
-language: java
+language: java 
 script: "mvn -f ./de.hoesel.dav.buv.twitter.tycho.master/pom.xml test"
