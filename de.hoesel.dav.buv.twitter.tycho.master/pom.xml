@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.hoesel.dav.buv.twitter</groupId>
+	<artifactId>de.hoesel.dav.buv.twitter.tycho.master</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>Maven Build Dav-Twitter-Anbindung</name>
+	<modules>
+
+		<module>../de.hoesel.dav.buv.twitter</module>
+		<module>../de.hoesel.dav.buv.twitter.feature</module>
+		<module>../de.hoesel.dav.buv.twitter.repository</module>
+	</modules>
+
+	<properties>
+		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		<tycho-version>0.19.0</tycho-version>
+		<tycho-extras-version>0.19.0</tycho-extras-version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>Rahmenwerk</id>
+			<layout>p2</layout>
+			<url>http://www.nerz-ev.de/www.nerz-ev.de/download/ftp/buv/UpdateSeite_BuV-PlugIn-NERZ-Gesamt_FREI_V2.0.0_D2013-12-19_RW-2</url>
+		</repository>
+		<repository>
+			<id>LosE</id>
+			<layout>p2</layout>
+			<url>http://bitctrl.de/projekte/lose_rw2.0/updatesite/</url>
+		</repository>
+			<repository>
+			<id>kepler</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/kepler/</url>
+		</repository>
+			<repository>
+			<id>nebula</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/technology/nebula/snapshot</url>
+		</repository>
+		
+	</repositories>
+
+	<build>
+		<!-- Die SRC Directory brauchen wir, damit Checkstyle weiß wo unsere Sourcen 
+			sind, Eclipse Plugins sind halt anders. -->
+		<sourceDirectory>src</sourceDirectory>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-versions-plugin</artifactId>
+				<version>${tycho-version}</version>
+			</plugin>
+			<plugin>
+				<!-- Set tycho-versions:update-pom in Goals and execute maven -->
+				<!-- http://codeandme.blogspot.de/2012/12/tycho-build-9-updating-version-numbers.html -->
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-director-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<compilerArguments>
+						<properties>${project.basedir}/.settings/org.eclipse.jdt.core.prefs</properties>
+					</compilerArguments>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<compilerArgument>-Xlint:all</compilerArgument>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-director-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-repository-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+			</plugins>
+
+		</pluginManagement>
+	</build>
+
+
+
+</project>
