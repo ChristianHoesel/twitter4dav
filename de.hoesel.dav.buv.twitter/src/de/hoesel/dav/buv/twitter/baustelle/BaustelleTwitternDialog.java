@@ -45,7 +45,7 @@ import de.hoesel.dav.buv.twitter.Activator;
 import de.hoesel.dav.buv.twitter.internal.RahmenwerkService;
 
 public class BaustelleTwitternDialog extends TitleAreaDialog {
-	private static final String ICONS_BIRD_BLUE_48_PNG = "icons/bird_blue_48.png";
+	private static final String ICONS_BIRD_BLUE_48_PNG = "icons/bird_blue_32.png";
 	private Text messgae;
 	private Baustelle baustelle;
 	private NetzCacheExtended netzCache;
@@ -58,6 +58,7 @@ public class BaustelleTwitternDialog extends TitleAreaDialog {
 	 */
 	public BaustelleTwitternDialog(Shell parentShell, Baustelle baustelle) {
 		super(parentShell);
+		setShellStyle(SWT.MAX | SWT.RESIZE);
 		Assert.isNotNull(baustelle);
 		this.baustelle = baustelle;
 
@@ -83,8 +84,9 @@ public class BaustelleTwitternDialog extends TitleAreaDialog {
 			imageRegistry.put(imageDescriptor.toString(), imageDescriptor);
 			image = imageRegistry.get(imageDescriptor.toString());
 		}
-		setTitleImage(image);
+//		setTitleImage(image);
 		setTitle("Baustelle " + baustelle.getName() + " twittern");
+		setMessage("Folgender Text wird via Twitter publiziert.");
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
