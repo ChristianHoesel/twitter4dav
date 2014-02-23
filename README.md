@@ -1,4 +1,4 @@
-twitter4dav
+twitter4dav[![Build Status](https://travis-ci.org/ChristianHoesel/DavDataBaseArchive.png?branch=master)](https://travis-ci.org/ChristianHoesel/DavDataBaseArchive)
 ===========
 
 Experimentelle Twitteranbindung für das ERZ Datenverteiler Rahmenwerk.
